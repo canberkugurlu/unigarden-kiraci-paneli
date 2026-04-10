@@ -37,11 +37,6 @@ export default function KiraciSidebar({ ad, soyad, email, onClose }: { ad: strin
             <p className="text-xs text-gray-400 truncate max-w-[130px]">{email}</p>
           </div>
         </div>
-        {onClose && (
-          <button onClick={onClose} className="md:hidden p-1 text-gray-400 hover:text-white shrink-0 mt-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        )}
       </div>
 
       <div className="p-2 border-b border-gray-700">
