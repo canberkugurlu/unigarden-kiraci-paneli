@@ -13,7 +13,7 @@ const menuItems = [
   { href: "/dashboard/duyurular", label: "Duyurular", icon: Megaphone },
 ];
 
-export default function KiraciSidebar({ ad, soyad, email }: { ad: string; soyad: string; email: string }) {
+export default function KiraciSidebar({ ad, soyad, email, onClose }: { ad: string; soyad: string; email: string; onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -25,17 +25,22 @@ export default function KiraciSidebar({ ad, soyad, email }: { ad: string; soyad:
   };
 
   return (
-    <aside className="w-64 min-h-screen bg-gray-900 text-white flex flex-col">
-      <div className="p-6 border-b border-gray-700">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-sm font-bold">
+    <aside className="w-64 h-full bg-gray-900 text-white flex flex-col">
+      <div className="p-5 border-b border-gray-700 flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-sm font-bold shrink-0">
             {ad[0]}{soyad[0]}
           </div>
           <div>
             <p className="font-semibold text-sm">{ad} {soyad}</p>
-            <p className="text-xs text-gray-400 truncate max-w-[140px]">{email}</p>
+            <p className="text-xs text-gray-400 truncate max-w-[130px]">{email}</p>
           </div>
         </div>
+        {onClose && (
+          <button onClick={onClose} className="md:hidden p-1 text-gray-400 hover:text-white shrink-0 mt-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        )}
       </div>
 
       <div className="p-2 border-b border-gray-700">
