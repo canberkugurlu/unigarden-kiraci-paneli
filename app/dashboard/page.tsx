@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { FileText, CreditCard, Wrench, Megaphone, AlertCircle } from "lucide-react";
+import { FileText, CreditCard, Wrench, Megaphone, AlertCircle, Zap } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect("/giris");
 
-  const [sozlesme, odemeler, talepler, duyurular] = await Promise.all([
+  const [sozlesme, odemeler, talepler, duyurular, sonFatura] = await Promise.all([
     prisma.sozlesme.findFirst({
       where: { ogrenciId: session.id, durum: "Aktif" },
       include: { konut: true },
@@ -23,6 +23,11 @@ export default async function DashboardPage() {
     }),
     prisma.bakimTalebi.findMany({ where: { ogrenciId: session.id, durum: { not: "Tamamlandi" } } }),
     prisma.duyuru.findMany({ where: { yayinda: true }, orderBy: { tarih: "desc" }, take: 3 }),
+    prisma.sozlesme.findFirst({ where: { ogrenciId: session.id, durum: "Aktif" }, select: { konutId: true, aylikKira: true, konut: { select: { etap: true } } } })
+      .then(async (s) => {
+        if (!s || s.konut.etap !== 1) return null;
+        return prisma.etapFatura.findFirst({ where: { konutId: s.konutId }, orderBy: [{ yil: "desc" }, { ay: "desc" }] });
+      }),
   ]);
 
   const fmt = (n: number) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(n);
@@ -88,6 +93,23 @@ export default async function DashboardPage() {
           <p className="text-lg font-bold text-gray-800">{duyurular.length}</p>
           <p className="text-xs text-gray-400 mt-1">Yeni duyuru</p>
         </Link>
+
+        {sonFatura && (() => {
+          const toplam = sonFatura.elektrik + sonFatura.su + sonFatura.dogalgaz + sonFatura.internet;
+          const kota = Math.max(0, toplam - sonFatura.kotaEsigi);
+          return (
+            <Link href="/dashboard/faturalar" className={`rounded-2xl p-5 shadow-sm border hover:shadow-md transition-shadow ${kota > 0 ? "bg-red-50 border-red-200" : "bg-white border-gray-100"}`}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${kota > 0 ? "bg-red-100" : "bg-yellow-100"}`}>
+                  <Zap size={18} className={kota > 0 ? "text-red-600" : "text-yellow-600"} />
+                </div>
+                <span className="text-sm text-gray-500">Faturalarım</span>
+              </div>
+              <p className={`text-lg font-bold ${kota > 0 ? "text-red-700" : "text-gray-800"}`}>{fmt(toplam)}</p>
+              <p className="text-xs text-gray-400 mt-1">{kota > 0 ? `+${fmt(kota)} kota ödemesi` : "Kota dahilinde"}</p>
+            </Link>
+          );
+        })()}
       </div>
 
       {/* Sözleşme özeti */}

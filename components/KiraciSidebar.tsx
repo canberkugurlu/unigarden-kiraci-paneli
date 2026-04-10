@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, CreditCard, Wrench, Megaphone, LogOut, KeyRound } from "lucide-react";
+import { LayoutDashboard, FileText, CreditCard, Wrench, Megaphone, LogOut, KeyRound, Zap } from "lucide-react";
 import { useState } from "react";
 
 const menuItems = [
   { href: "/dashboard", label: "Ana Sayfa", icon: LayoutDashboard },
   { href: "/dashboard/sozlesme", label: "Sözleşmem", icon: FileText },
   { href: "/dashboard/odemeler", label: "Ödemelerim", icon: CreditCard },
+  { href: "/dashboard/faturalar", label: "Faturalarım", icon: Zap },
   { href: "/dashboard/bakim", label: "Bakım Bildirimi", icon: Wrench },
   { href: "/dashboard/duyurular", label: "Duyurular", icon: Megaphone },
 ];
