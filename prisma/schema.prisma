@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model DaireSahibi {
+  id           String   @id @default(cuid())
+  ad           String
+  soyad        String
+  tcKimlik     String   @unique
+  telefon      String
+  email        String?
+  notlar       String?
+  olusturmaTar DateTime @default(now())
+  konutlar     Konut[]
+}
+
+model Konut {
+  id             String        @id @default(cuid())
+  blok           String
+  katNo          Int
+  daireNo        String        @unique
+  tip            String
+  metrekare      Float
+  kiraBedeli     Float
+  durum          String        @default("Bos")
+  ozellikler     String?
+  etap           Int           @default(1)
+  daireSahibiId  String?
+  daireSahibi    DaireSahibi?  @relation(fields: [daireSahibiId], references: [id])
+  olusturmaTar   DateTime      @default(now())
+  sozlesmeler    Sozlesme[]
+  bakimTalepleri BakimTalebi[]
+}
+
+model Ogrenci {
+  id             String        @id @default(cuid())
+  ad             String
+  soyad          String
+  tcKimlik       String        @unique
+  ogrenciNo      String?
+  universite     String?
+  bolum          String?
+  telefon        String
+  email          String        @unique
+  acilKisi       String?
+  acilTelefon    String?
+  notlar         String?
+  sifre          String?
+  olusturmaTar   DateTime      @default(now())
+  sozlesmeler    Sozlesme[]
+  bakimTalepleri BakimTalebi[]
+}
+
+model Sozlesme {
+  id              String   @id @default(cuid())
+  sozlesmeNo      String   @unique
+  konutId         String
+  konut           Konut    @relation(fields: [konutId], references: [id])
+  ogrenciId       String
+  ogrenci         Ogrenci  @relation(fields: [ogrenciId], references: [id])
+  baslangicTarihi DateTime
+  bitisTarihi     DateTime
+  aylikKira       Float
+  depozito        Float
+  kiraOdemGunu    Int      @default(1)
+  ozelSartlar     String?
+  durum           String   @default("Aktif")
+  imzaTarihi      DateTime @default(now())
+  olusturmaTar    DateTime @default(now())
+  odemeler        Odeme[]
+}
+
+model Odeme {
+  id           String   @id @default(cuid())
+  sozlesmeId   String
+  sozlesme     Sozlesme @relation(fields: [sozlesmeId], references: [id])
+  tutar        Float
+  tip          String
+  odenmeTarihi DateTime
+  aciklama     String?
+  olusturmaTar DateTime @default(now())
+}
+
+model Tedarikci {
+  id           String   @id @default(cuid())
+  ad           String
+  telefon      String
+  email        String?
+  kategori     String
+  notlar       String?
+  olusturmaTar DateTime @default(now())
+}
+
+model Gider {
+  id           String   @id @default(cuid())
+  baslik       String
+  tutar        Float
+  kategori     String
+  tarih        DateTime
+  aciklama     String?
+  olusturmaTar DateTime @default(now())
+}
+
+model BakimTalebi {
+  id            String    @id @default(cuid())
+  baslik        String
+  aciklama      String
+  durum         String    @default("Bekliyor")
+  oncelik       String    @default("Normal")
+  olusturmaTar  DateTime  @default(now())
+  tamamlanmaTar DateTime?
+  ogrenciId     String
+  ogrenci       Ogrenci   @relation(fields: [ogrenciId], references: [id])
+  konutId       String
+  konut         Konut     @relation(fields: [konutId], references: [id])
+}
+
+model Duyuru {
+  id       String   @id @default(cuid())
+  baslik   String
+  icerik   String
+  tarih    DateTime @default(now())
+  hedef    String   @default("Tumu")
+  yayinda  Boolean  @default(true)
+}
