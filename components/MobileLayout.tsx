@@ -10,7 +10,7 @@ import {
 import ThemeToggle from "./ThemeToggle";
 
 const ALL_ITEMS = [
-  { href: "/dashboard",           label: "Ana Sayfa",       icon: LayoutDashboard, color: "bg-emerald-500", textColor: "text-emerald-600" },
+  { href: "/dashboard",           label: "Dashboard",       icon: LayoutDashboard, color: "bg-emerald-500", textColor: "text-emerald-600" },
   { href: "/dashboard/sozlesme",  label: "Sözleşmem",       icon: FileText,        color: "bg-blue-500",    textColor: "text-blue-600" },
   { href: "/dashboard/odemeler",  label: "Ödemelerim",      icon: CreditCard,      color: "bg-green-500",   textColor: "text-green-600" },
   { href: "/dashboard/faturalar", label: "Faturalarım",     icon: Zap,             color: "bg-yellow-500",  textColor: "text-yellow-600" },

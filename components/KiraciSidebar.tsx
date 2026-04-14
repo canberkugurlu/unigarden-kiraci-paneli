@@ -7,7 +7,7 @@ import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 
 const menuItems = [
-  { href: "/dashboard", label: "Ana Sayfa", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/sozlesme", label: "Sözleşmem", icon: FileText },
   { href: "/dashboard/odemeler", label: "Ödemelerim", icon: CreditCard },
   { href: "/dashboard/faturalar", label: "Faturalarım", icon: Zap },
