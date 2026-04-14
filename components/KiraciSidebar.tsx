@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, CreditCard, Wrench, Megaphone, LogOut, KeyRound, Zap } from "lucide-react";
+import { LayoutDashboard, FileText, CreditCard, Wrench, Megaphone, LogOut, KeyRound, Zap , CheckSquare} from "lucide-react";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 
@@ -13,6 +13,7 @@ const menuItems = [
   { href: "/dashboard/faturalar", label: "Faturalarım", icon: Zap },
   { href: "/dashboard/bakim", label: "Bakım Bildirimi", icon: Wrench },
   { href: "/dashboard/duyurular", label: "Duyurular", icon: Megaphone },
+  { href: "/dashboard/gorevlerim", label: "Görevlerim", icon: CheckSquare, color: "bg-blue-500/20 text-blue-400" },
 ];
 
 export default function KiraciSidebar({ ad, soyad, email, onClose }: { ad: string; soyad: string; email: string; onClose?: () => void }) {
