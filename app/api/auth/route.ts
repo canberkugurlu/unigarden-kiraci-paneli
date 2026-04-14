@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
   if (!email || !sifre) {
     // Boş form → ilk öğrenciyi otomatik giriş
     ogrenci = await prisma.ogrenci.findFirst({
-      where: { email: { not: null } },
       orderBy: [{ olusturmaTar: "asc" }],
     });
     if (!ogrenci) {
