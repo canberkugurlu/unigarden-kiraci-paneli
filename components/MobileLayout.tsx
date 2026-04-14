@@ -7,6 +7,7 @@ import {
   LayoutDashboard, FileText, CreditCard, Zap, Wrench, Megaphone,
   LogOut, Menu, X, ArrowLeft, User,
 } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const ALL_ITEMS = [
   { href: "/dashboard",           label: "Ana Sayfa",       icon: LayoutDashboard, color: "bg-emerald-500", textColor: "text-emerald-600" },
@@ -50,6 +51,7 @@ export default function MobileLayout({ ad, soyad, children }: { ad: string; soya
             <h1 className="font-semibold text-base truncate leading-tight">{baslik}</h1>
             {isRoot && <p className="text-[11px] text-emerald-100 leading-tight">{ad} {soyad}</p>}
           </div>
+          <ThemeToggle className="!text-white hover:!bg-white/10" />
           <button onClick={cikisYap} className="p-2 rounded-full hover:bg-white/10" title="Çıkış"><LogOut size={20} /></button>
         </div>
       </header>

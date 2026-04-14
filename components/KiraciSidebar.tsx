@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, FileText, CreditCard, Wrench, Megaphone, LogOut, KeyRound, Zap } from "lucide-react";
 import { useState } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 const menuItems = [
   { href: "/dashboard", label: "Ana Sayfa", icon: LayoutDashboard },
