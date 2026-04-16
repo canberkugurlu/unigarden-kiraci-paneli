@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { FileText, CreditCard, Wrench, Megaphone, AlertCircle, Zap } from "lucide-react";
+import { FileText, CreditCard, Wrench, Megaphone, AlertCircle, Zap, Clock, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect("/giris");
 
-  const [sozlesme, odemeler, talepler, duyurular, sonFatura] = await Promise.all([
+  const [sozlesme, odemeler, talepler, duyurular, sonFatura, pendingSozlesme] = await Promise.all([
     prisma.sozlesme.findFirst({
       where: { ogrenciId: session.id, durum: "Aktif" },
       include: { konut: true },
@@ -28,6 +28,13 @@ export default async function DashboardPage() {
         if (!s || s.konut.etap !== 1) return null;
         return prisma.etapFatura.findFirst({ where: { konutId: s.konutId }, orderBy: [{ yil: "desc" }, { ay: "desc" }] });
       }),
+    prisma.sozlesme.findFirst({
+      where: {
+        ogrenciId: session.id,
+        durum: { in: ["BekleniyorImza", "ImzalandiOnayBekliyor", "OnaylandiAktifBekliyor"] },
+      },
+      orderBy: { olusturmaTar: "desc" },
+    }),
   ]);
 
   const fmt = (n: number) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(n);
@@ -43,6 +50,83 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold text-gray-900">Merhaba, {session.ad} 👋</h1>
         <p className="text-gray-500 text-sm mt-1">{fmtT(new Date())}</p>
       </div>
+
+      {/* Süreç Durumu — yalnızca aktif sözleşme yokken göster */}
+      {!sozlesme && (() => {
+        const d = pendingSozlesme?.durum;
+        const imzaBekleniyor = d === "BekleniyorImza";
+        const onayBekleniyor = d === "ImzalandiOnayBekliyor";
+        const baslangicBekleniyor = d === "OnaylandiAktifBekliyor";
+
+        const steps = [
+          {
+            label: "Potansiyel Kiracı",
+            desc: "Kayıt oluşturuldu",
+            done: !!d,
+            active: !d,
+          },
+          {
+            label: "Pasif Kiracı",
+            desc: imzaBekleniyor ? "Sözleşme imzanızı bekliyor" : "Sözleşme imzalandı",
+            done: onayBekleniyor || baslangicBekleniyor,
+            active: imzaBekleniyor,
+          },
+          {
+            label: "Onay Süreci",
+            desc: baslangicBekleniyor ? "Tüm onaylar tamamlandı" : "3 taraflı onay bekleniyor",
+            done: baslangicBekleniyor,
+            active: onayBekleniyor,
+          },
+          {
+            label: "Aktif Kiracı",
+            desc: "Sözleşme başlangıç tarihinde aktif olacaksınız",
+            done: false,
+            active: baslangicBekleniyor,
+          },
+        ];
+
+        return (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Clock size={16} className="text-amber-500" />
+              <h2 className="font-semibold text-gray-800 text-sm">Kiracılık Süreci</h2>
+            </div>
+            <div className="flex items-start gap-0">
+              {steps.map((step, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center text-center">
+                  <div className="flex items-center w-full">
+                    {i > 0 && <div className={`h-0.5 flex-1 ${steps[i - 1].done ? "bg-emerald-400" : "bg-gray-200"}`} />}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold border-2 ${
+                      step.done
+                        ? "bg-emerald-500 border-emerald-500 text-white"
+                        : step.active
+                        ? "bg-amber-100 border-amber-400 text-amber-700"
+                        : "bg-gray-100 border-gray-200 text-gray-400"
+                    }`}>
+                      {step.done ? <CheckCircle size={14} /> : i + 1}
+                    </div>
+                    {i < steps.length - 1 && <div className={`h-0.5 flex-1 ${step.done ? "bg-emerald-400" : "bg-gray-200"}`} />}
+                  </div>
+                  <p className={`text-xs font-semibold mt-2 ${step.active ? "text-amber-600" : step.done ? "text-emerald-600" : "text-gray-400"}`}>
+                    {step.label}
+                  </p>
+                  <p className="text-[10px] text-gray-400 mt-0.5 leading-tight px-1">{step.active || step.done ? step.desc : ""}</p>
+                </div>
+              ))}
+            </div>
+            {pendingSozlesme && (
+              <div className="mt-4 pt-4 border-t border-gray-100 text-center">
+                <Link href="/dashboard/sozlesme" className="text-xs text-emerald-600 hover:underline font-medium">
+                  {imzaBekleniyor ? "→ Sözleşmeyi görüntüle ve imzala" : "→ Sözleşme durumunu görüntüle"}
+                </Link>
+              </div>
+            )}
+            {!pendingSozlesme && (
+              <p className="mt-3 text-center text-xs text-gray-400">Kiralama temsilciniz sözleşmenizi hazırlayacak ve size iletecektir.</p>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Özet Kartlar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
