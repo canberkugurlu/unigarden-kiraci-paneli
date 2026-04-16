@@ -6,10 +6,19 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
-  title: "UNIGARDEN Kiracı Paneli",
-  description: "Kiracı bilgi ve yönetim portalı",
+  title: "UNIGARDEN Kiracı",
+  description: "UNIGARDEN Kiracı Portalı — sözleşme, ödeme ve bakım bildirimleri",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Kiracı" },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "UNIGARDEN Kiracı",
+    startupImage: "/icon-512x512.png",
+  },
+  icons: {
+    apple: "/icon-192x192.png",
+    icon: "/icon-192x192.png",
+  },
 };
 
 export const viewport: Viewport = {
