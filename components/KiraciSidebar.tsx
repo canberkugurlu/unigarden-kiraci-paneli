@@ -9,7 +9,7 @@ import ThemeToggle from "./ThemeToggle";
 const ALL_MENU = [
   { href: "/dashboard",            label: "Dashboard",       icon: LayoutDashboard, minRol: "Potansiyel" },
   { href: "/dashboard/sozlesme",   label: "Sözleşmem",       icon: FileText,        minRol: "Potansiyel" },
-  { href: "/dashboard/bakim",      label: "Bakım Bildirimi", icon: Wrench,          minRol: "Pasif" },
+  { href: "/dashboard/bakim",      label: "Talepler",        icon: Wrench,          minRol: "Pasif" },
   { href: "/dashboard/odemeler",   label: "Ödemelerim",      icon: CreditCard,      minRol: "Aktif" },
   { href: "/dashboard/faturalar",  label: "Faturalarım",     icon: Zap,             minRol: "Aktif" },
   { href: "/dashboard/duyurular",  label: "Duyurular",       icon: Megaphone,       minRol: "Aktif" },

@@ -12,7 +12,7 @@ import ThemeToggle from "./ThemeToggle";
 const ALL_ITEMS_DEF = [
   { href: "/dashboard",           label: "Dashboard",       icon: LayoutDashboard, color: "bg-emerald-500", textColor: "text-emerald-600", minRol: "Potansiyel" },
   { href: "/dashboard/sozlesme",  label: "Sözleşmem",       icon: FileText,        color: "bg-blue-500",    textColor: "text-blue-600",    minRol: "Potansiyel" },
-  { href: "/dashboard/bakim",     label: "Bakım Bildirimi", icon: Wrench,          color: "bg-orange-500",  textColor: "text-orange-600",  minRol: "Pasif" },
+  { href: "/dashboard/bakim",     label: "Talepler",        icon: Wrench,          color: "bg-orange-500",  textColor: "text-orange-600",  minRol: "Pasif" },
   { href: "/dashboard/odemeler",  label: "Ödemelerim",      icon: CreditCard,      color: "bg-green-500",   textColor: "text-green-600",   minRol: "Aktif" },
   { href: "/dashboard/faturalar", label: "Faturalarım",     icon: Zap,             color: "bg-yellow-500",  textColor: "text-yellow-600",  minRol: "Aktif" },
   { href: "/dashboard/duyurular", label: "Duyurular",       icon: Megaphone,       color: "bg-red-500",     textColor: "text-red-600",     minRol: "Aktif" },

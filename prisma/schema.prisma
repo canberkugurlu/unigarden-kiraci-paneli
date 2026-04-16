@@ -134,6 +134,7 @@ model BakimTalebi {
   aciklama      String
   durum         String    @default("Bekliyor")
   oncelik       String    @default("Normal")
+  kategori      String    @default("Diger")
   olusturmaTar  DateTime  @default(now())
   tamamlanmaTar DateTime?
   ogrenciId     String

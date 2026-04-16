@@ -145,26 +145,28 @@ export default async function DashboardPage() {
           )}
         </Link>
 
-        <Link href="/dashboard/odemeler" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center"><CreditCard size={18} className="text-blue-600" /></div>
-            <span className="text-sm text-gray-500">Son Ödeme</span>
-          </div>
-          {odemeler[0] ? (
-            <>
-              <p className="text-lg font-bold text-gray-800">{fmt(odemeler[0].tutar)}</p>
-              <p className="text-xs text-gray-400 mt-1">{fmtT(odemeler[0].odenmeTarihi)}</p>
-            </>
-          ) : (
-            <p className="text-sm text-gray-400">Ödeme kaydı yok</p>
-          )}
-        </Link>
+        {session.rol !== "Potansiyel" && (
+          <Link href="/dashboard/odemeler" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center"><CreditCard size={18} className="text-blue-600" /></div>
+              <span className="text-sm text-gray-500">Son Ödeme</span>
+            </div>
+            {odemeler[0] ? (
+              <>
+                <p className="text-lg font-bold text-gray-800">{fmt(odemeler[0].tutar)}</p>
+                <p className="text-xs text-gray-400 mt-1">{fmtT(odemeler[0].odenmeTarihi)}</p>
+              </>
+            ) : (
+              <p className="text-sm text-gray-400">Ödeme kaydı yok</p>
+            )}
+          </Link>
+        )}
 
         {session.rol !== "Potansiyel" && (
           <Link href="/dashboard/bakim" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center"><Wrench size={18} className="text-orange-600" /></div>
-              <span className="text-sm text-gray-500">Bakım Talep</span>
+              <span className="text-sm text-gray-500">Talepler</span>
             </div>
             <p className="text-lg font-bold text-gray-800">{talepler.length}</p>
             <p className="text-xs text-gray-400 mt-1">Açık talep</p>
