@@ -28,7 +28,11 @@ export default function MobileLayout({ ad, soyad, rol = "Aktif", children }: { a
 
   const rolIdx = ROL_SIRASI.indexOf(rol);
   const ALL_ITEMS = ALL_ITEMS_DEF.filter(item => ROL_SIRASI.indexOf(item.minRol) <= rolIdx);
-  const BOTTOM_ITEMS = ALL_ITEMS.slice(0, 4);
+  // Tümü 4'e sığıyorsa "Daha Fazla" gizle, sığmıyorsa ilk 4 + "Daha Fazla"
+  const showDahaFazla = ALL_ITEMS.length > 4;
+  const BOTTOM_ITEMS = ALL_ITEMS.slice(0, showDahaFazla ? 4 : ALL_ITEMS.length);
+  const GRID_COLS = BOTTOM_ITEMS.length + (showDahaFazla ? 1 : 0);
+  const gridClass = ["grid-cols-1","grid-cols-2","grid-cols-3","grid-cols-4","grid-cols-5"][GRID_COLS - 1] ?? "grid-cols-5";
 
   const aktifItem = ALL_ITEMS.find(i => i.href === pathname);
   const baslik = aktifItem?.label ?? "Kiracı Paneli";
@@ -63,7 +67,7 @@ export default function MobileLayout({ ad, soyad, rol = "Aktif", children }: { a
       <main className="flex-1 overflow-y-auto overscroll-contain bg-gray-50 pb-24"><div className="p-4">{children}</div></main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.04)] pb-[env(safe-area-inset-bottom)]">
-        <div className="grid grid-cols-5 h-16">
+        <div className={`grid ${gridClass} h-16`}>
           {BOTTOM_ITEMS.map(({ href, label, icon: Icon, textColor }) => {
             const active = pathname === href;
             return (
@@ -73,9 +77,11 @@ export default function MobileLayout({ ad, soyad, rol = "Aktif", children }: { a
               </Link>
             );
           })}
-          <button onClick={() => setMenuAcik(true)} className={`flex flex-col items-center justify-center gap-0.5 text-[10px] transition-colors ${menuAcik ? "text-emerald-600 font-semibold" : "text-gray-500"}`}>
-            <Menu size={20} /><span className="leading-tight">Daha Fazla</span>
-          </button>
+          {showDahaFazla && (
+            <button onClick={() => setMenuAcik(true)} className={`flex flex-col items-center justify-center gap-0.5 text-[10px] transition-colors ${menuAcik ? "text-emerald-600 font-semibold" : "text-gray-500"}`}>
+              <Menu size={20} /><span className="leading-tight">Daha Fazla</span>
+            </button>
+          )}
         </div>
       </nav>
 
