@@ -50,16 +50,18 @@ export async function proxy(req: NextRequest) {
     return redirect(req, "/dashboard/sozlesme");
   }
 
-  // Pasif: sadece /sozlesme-imza ve ilgili API'ler
+  // Pasif: dashboard, sozlesme, bakim ve ilgili API'ler
   if (rol === "Pasif") {
     if (
+      pathname.startsWith("/dashboard") ||
       pathname.startsWith("/sozlesme-imza") ||
       pathname.startsWith("/api/portal/sozlesme") ||
-      pathname.startsWith("/api/portal/durum")
+      pathname.startsWith("/api/portal/durum") ||
+      pathname.startsWith("/api/bakim")
     ) {
       return NextResponse.next();
     }
-    return redirect(req, "/sozlesme-imza");
+    return redirect(req, "/dashboard/sozlesme");
   }
 
   // Aktif: her şeye erişim
