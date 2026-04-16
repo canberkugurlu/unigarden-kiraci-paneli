@@ -38,12 +38,16 @@ export async function proxy(req: NextRequest) {
 
   const rol = payload.rol ?? "Aktif";
 
-  // Potansiyel: sadece /bekliyor ve /api/portal/durum
+  // Potansiyel: sadece dashboard ve sozlesme sayfası
   if (rol === "Potansiyel") {
-    if (pathname.startsWith("/bekliyor") || pathname.startsWith("/api/portal/durum")) {
+    if (
+      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/api/portal/sozlesme") ||
+      pathname.startsWith("/api/portal/durum")
+    ) {
       return NextResponse.next();
     }
-    return redirect(req, "/bekliyor");
+    return redirect(req, "/dashboard/sozlesme");
   }
 
   // Pasif: sadece /sozlesme-imza ve ilgili API'ler

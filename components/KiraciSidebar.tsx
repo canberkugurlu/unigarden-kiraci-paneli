@@ -6,19 +6,24 @@ import { LayoutDashboard, FileText, CreditCard, Wrench, Megaphone, LogOut, KeyRo
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 
-const menuItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/sozlesme", label: "Sözleşmem", icon: FileText },
-  { href: "/dashboard/odemeler", label: "Ödemelerim", icon: CreditCard },
-  { href: "/dashboard/faturalar", label: "Faturalarım", icon: Zap },
-  { href: "/dashboard/bakim", label: "Bakım Bildirimi", icon: Wrench },
-  { href: "/dashboard/duyurular", label: "Duyurular", icon: Megaphone },
+const ALL_MENU = [
+  { href: "/dashboard",            label: "Dashboard",       icon: LayoutDashboard, minRol: "Aktif" },
+  { href: "/dashboard/sozlesme",   label: "Sözleşmem",       icon: FileText,        minRol: "Potansiyel" },
+  { href: "/dashboard/odemeler",   label: "Ödemelerim",      icon: CreditCard,      minRol: "Aktif" },
+  { href: "/dashboard/faturalar",  label: "Faturalarım",     icon: Zap,             minRol: "Aktif" },
+  { href: "/dashboard/bakim",      label: "Bakım Bildirimi", icon: Wrench,          minRol: "Aktif" },
+  { href: "/dashboard/duyurular",  label: "Duyurular",       icon: Megaphone,       minRol: "Aktif" },
 ];
 
-export default function KiraciSidebar({ ad, soyad, email, onClose }: { ad: string; soyad: string; email: string; onClose?: () => void }) {
+const ROL_SIRASI = ["Potansiyel", "Pasif", "Aktif"];
+
+export default function KiraciSidebar({ ad, soyad, email, rol = "Aktif", onClose }: { ad: string; soyad: string; email: string; rol?: string; onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const rolIdx = ROL_SIRASI.indexOf(rol);
+  const menuItems = ALL_MENU.filter(item => ROL_SIRASI.indexOf(item.minRol) <= rolIdx);
 
   const cikis = async () => {
     setLoading(true);

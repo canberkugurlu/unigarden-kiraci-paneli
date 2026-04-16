@@ -9,22 +9,26 @@ import {
 } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
-const ALL_ITEMS = [
-  { href: "/dashboard",           label: "Dashboard",       icon: LayoutDashboard, color: "bg-emerald-500", textColor: "text-emerald-600" },
-  { href: "/dashboard/sozlesme",  label: "Sözleşmem",       icon: FileText,        color: "bg-blue-500",    textColor: "text-blue-600" },
-  { href: "/dashboard/odemeler",  label: "Ödemelerim",      icon: CreditCard,      color: "bg-green-500",   textColor: "text-green-600" },
-  { href: "/dashboard/faturalar", label: "Faturalarım",     icon: Zap,             color: "bg-yellow-500",  textColor: "text-yellow-600" },
-  { href: "/dashboard/bakim",     label: "Bakım Bildirimi", icon: Wrench,          color: "bg-orange-500",  textColor: "text-orange-600" },
-  { href: "/dashboard/duyurular", label: "Duyurular",       icon: Megaphone,       color: "bg-red-500",     textColor: "text-red-600" },
+const ALL_ITEMS_DEF = [
+  { href: "/dashboard",           label: "Dashboard",       icon: LayoutDashboard, color: "bg-emerald-500", textColor: "text-emerald-600", minRol: "Aktif" },
+  { href: "/dashboard/sozlesme",  label: "Sözleşmem",       icon: FileText,        color: "bg-blue-500",    textColor: "text-blue-600",    minRol: "Potansiyel" },
+  { href: "/dashboard/odemeler",  label: "Ödemelerim",      icon: CreditCard,      color: "bg-green-500",   textColor: "text-green-600",   minRol: "Aktif" },
+  { href: "/dashboard/faturalar", label: "Faturalarım",     icon: Zap,             color: "bg-yellow-500",  textColor: "text-yellow-600",  minRol: "Aktif" },
+  { href: "/dashboard/bakim",     label: "Bakım Bildirimi", icon: Wrench,          color: "bg-orange-500",  textColor: "text-orange-600",  minRol: "Aktif" },
+  { href: "/dashboard/duyurular", label: "Duyurular",       icon: Megaphone,       color: "bg-red-500",     textColor: "text-red-600",     minRol: "Aktif" },
 ];
 
-const BOTTOM_ITEMS = [ALL_ITEMS[0], ALL_ITEMS[1], ALL_ITEMS[2], ALL_ITEMS[3]];
+const ROL_SIRASI = ["Potansiyel", "Pasif", "Aktif"];
 
-export default function MobileLayout({ ad, soyad, children }: { ad: string; soyad: string; children: React.ReactNode }) {
+export default function MobileLayout({ ad, soyad, rol = "Aktif", children }: { ad: string; soyad: string; rol?: string; children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuAcik, setMenuAcik] = useState(false);
   const [drawerAcik, setDrawerAcik] = useState(false);
+
+  const rolIdx = ROL_SIRASI.indexOf(rol);
+  const ALL_ITEMS = ALL_ITEMS_DEF.filter(item => ROL_SIRASI.indexOf(item.minRol) <= rolIdx);
+  const BOTTOM_ITEMS = ALL_ITEMS.slice(0, 4);
 
   const aktifItem = ALL_ITEMS.find(i => i.href === pathname);
   const baslik = aktifItem?.label ?? "Kiracı Paneli";

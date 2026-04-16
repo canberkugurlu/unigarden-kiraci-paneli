@@ -7,7 +7,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!session) redirect("/giris");
 
   return (
-    <KiraciShell ad={session.ad} soyad={session.soyad} email={session.email}>
+    <KiraciShell ad={session.ad} soyad={session.soyad} email={session.email} rol={session.rol ?? "Aktif"}>
       {children}
     </KiraciShell>
   );
