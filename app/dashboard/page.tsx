@@ -212,8 +212,8 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* Son duyurular */}
-      {duyurular.length > 0 && (
+      {/* Son duyurular — sadece aktif kiracılara */}
+      {session.rol === "Aktif" && duyurular.length > 0 && (
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-800">Son Duyurular</h2>
