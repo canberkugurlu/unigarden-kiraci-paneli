@@ -1,8 +1,9 @@
 export const dynamic = "force-dynamic";
 
-import { getSession } from "@/lib/auth";
+import { getSession, signToken, COOKIE } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { FileText, Home, Calendar, CreditCard, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
@@ -13,6 +14,22 @@ const PENDING_DURUMLAR = ["BekleniyorImza", "ImzalandiOnayBekliyor", "OnaylandiA
 export default async function SozlesmePage() {
   const session = await getSession();
   if (!session) redirect("/giris");
+
+  // Başlangıç tarihi geçmiş OnaylandiAktifBekliyor sözleşmesi varsa otomatik aktifleştir
+  const bekleyenAktif = await prisma.sozlesme.findFirst({
+    where: { ogrenciId: session.id, durum: "OnaylandiAktifBekliyor", baslangicTarihi: { lte: new Date() } },
+  });
+  if (bekleyenAktif) {
+    await prisma.sozlesme.update({ where: { id: bekleyenAktif.id }, data: { durum: "Aktif" } });
+    await (prisma.ogrenci as unknown as { update: (a: object) => Promise<void> }).update({
+      where: { id: session.id }, data: { rol: "Aktif" },
+    });
+    // Cookie'yi yeni rolle güncelle
+    const yeniToken = await signToken({ ...session, rol: "Aktif" });
+    const cookieStore = await cookies();
+    cookieStore.set(COOKIE, yeniToken, { httpOnly: true, path: "/", maxAge: 60 * 60 * 24 * 7, sameSite: "lax" });
+    redirect("/dashboard/sozlesme");
+  }
 
   const sozlesme = await prisma.sozlesme.findFirst({
     where: { ogrenciId: session.id, durum: "Aktif" },
