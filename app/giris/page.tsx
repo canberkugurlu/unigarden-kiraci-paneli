@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 
 export default function GirisPage() {
@@ -85,9 +86,13 @@ export default function GirisPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Şifrenizi unuttuysanız yöneticinizle iletişime geçin.
-        </p>
+        <div className="mt-5 text-center space-y-2">
+          <p className="text-sm text-gray-500">
+            Hesabınız yok mu?{" "}
+            <Link href="/kayit" className="text-emerald-600 hover:underline font-medium">Kayıt Ol</Link>
+          </p>
+          <p className="text-xs text-gray-400">Şifrenizi unuttuysanız yöneticinizle iletişime geçin.</p>
+        </div>
       </div>
     </div>
   );
