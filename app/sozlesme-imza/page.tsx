@@ -189,9 +189,10 @@ export default function SozlesmeImzaPage() {
                     <span className="text-sm text-gray-700">{label}</span>
                   </div>
                   {onay ? (
-                    <span className="text-xs text-emerald-600 font-medium">
-                      ✓ {format(new Date(onay.tarih), "d MMM", { locale: tr })}
-                    </span>
+                    <div className="text-right">
+                      <p className="text-xs text-emerald-600 font-medium">✓ {onay.onaylayanAd}</p>
+                      <p className="text-[10px] text-gray-400">{format(new Date(onay.tarih), "d MMM yyyy", { locale: tr })}</p>
+                    </div>
                   ) : (
                     <span className="text-xs text-gray-400">Bekliyor</span>
                   )}
