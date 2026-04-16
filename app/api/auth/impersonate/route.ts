@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
 
   const authToken = await signToken({
     id: ogrenci.id, ad: ogrenci.ad, soyad: ogrenci.soyad, email: ogrenci.email ?? "",
+    rol: (ogrenci as unknown as { rol?: string }).rol ?? "Aktif",
   });
 
   const res = NextResponse.redirect(new URL("/dashboard", req.url));
