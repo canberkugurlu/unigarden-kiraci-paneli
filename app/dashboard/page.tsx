@@ -160,23 +160,27 @@ export default async function DashboardPage() {
           )}
         </Link>
 
-        <Link href="/dashboard/bakim" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center"><Wrench size={18} className="text-orange-600" /></div>
-            <span className="text-sm text-gray-500">Bakım Talep</span>
-          </div>
-          <p className="text-lg font-bold text-gray-800">{talepler.length}</p>
-          <p className="text-xs text-gray-400 mt-1">Açık talep</p>
-        </Link>
+        {session.rol !== "Potansiyel" && (
+          <Link href="/dashboard/bakim" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center"><Wrench size={18} className="text-orange-600" /></div>
+              <span className="text-sm text-gray-500">Bakım Talep</span>
+            </div>
+            <p className="text-lg font-bold text-gray-800">{talepler.length}</p>
+            <p className="text-xs text-gray-400 mt-1">Açık talep</p>
+          </Link>
+        )}
 
-        <Link href="/dashboard/duyurular" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center"><Megaphone size={18} className="text-purple-600" /></div>
-            <span className="text-sm text-gray-500">Duyurular</span>
-          </div>
-          <p className="text-lg font-bold text-gray-800">{duyurular.length}</p>
-          <p className="text-xs text-gray-400 mt-1">Yeni duyuru</p>
-        </Link>
+        {session.rol === "Aktif" && (
+          <Link href="/dashboard/duyurular" className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center"><Megaphone size={18} className="text-purple-600" /></div>
+              <span className="text-sm text-gray-500">Duyurular</span>
+            </div>
+            <p className="text-lg font-bold text-gray-800">{duyurular.length}</p>
+            <p className="text-xs text-gray-400 mt-1">Yeni duyuru</p>
+          </Link>
+        )}
 
         {sonFatura && (() => {
           const toplam = sonFatura.elektrik + sonFatura.su + sonFatura.dogalgaz + sonFatura.internet;
