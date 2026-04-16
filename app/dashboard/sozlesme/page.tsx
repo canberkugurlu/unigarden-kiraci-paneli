@@ -6,6 +6,9 @@ import { redirect } from "next/navigation";
 import { FileText, Home, Calendar, CreditCard, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
+import ImzaSection from "./ImzaSection";
+
+const PENDING_DURUMLAR = ["BekleniyorImza", "ImzalandiOnayBekliyor", "OnaylandiAktifBekliyor"];
 
 export default async function SozlesmePage() {
   const session = await getSession();
@@ -16,8 +19,19 @@ export default async function SozlesmePage() {
     include: { konut: { include: { daireSahibi: true } } },
   });
 
+  const pendingSozlesme = !sozlesme
+    ? await prisma.sozlesme.findFirst({
+        where: { ogrenciId: session.id, durum: { in: PENDING_DURUMLAR } },
+        include: { konut: true, onaylar: true },
+        orderBy: { olusturmaTar: "desc" },
+      })
+    : null;
+
   const gecmisSozlesmeler = await prisma.sozlesme.findMany({
-    where: { ogrenciId: session.id, durum: { not: "Aktif" } },
+    where: {
+      ogrenciId: session.id,
+      durum: { notIn: ["Aktif", ...PENDING_DURUMLAR] },
+    },
     include: { konut: true },
     orderBy: { olusturmaTar: "desc" },
   });
@@ -129,6 +143,30 @@ export default async function SozlesmePage() {
             </div>
           )}
         </>
+      ) : pendingSozlesme ? (
+        <ImzaSection sozlesme={{
+          id: pendingSozlesme.id,
+          sozlesmeNo: pendingSozlesme.sozlesmeNo,
+          durum: pendingSozlesme.durum,
+          aylikKira: pendingSozlesme.aylikKira,
+          depozito: pendingSozlesme.depozito,
+          kiraOdemGunu: pendingSozlesme.kiraOdemGunu,
+          baslangicTarihi: pendingSozlesme.baslangicTarihi.toString(),
+          bitisTarihi: pendingSozlesme.bitisTarihi.toString(),
+          ozelSartlar: pendingSozlesme.ozelSartlar ?? null,
+          onaylar: (pendingSozlesme.onaylar ?? []).map(o => ({
+            onaylayan: o.onaylayan,
+            onaylayanAd: o.onaylayanAd,
+            tarih: o.tarih.toString(),
+          })),
+          konut: {
+            daireNo: pendingSozlesme.konut.daireNo,
+            blok: pendingSozlesme.konut.blok,
+            etap: pendingSozlesme.konut.etap,
+            tip: pendingSozlesme.konut.tip,
+            metrekare: pendingSozlesme.konut.metrekare,
+          },
+        }} />
       ) : (
         <div className="text-center py-20 text-gray-400">
           <FileText size={48} className="mx-auto mb-4 opacity-30" />
