@@ -26,7 +26,19 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const token = await signToken({ id: ogrenci.id, ad: ogrenci.ad, soyad: ogrenci.soyad, email: ogrenci.email ?? "" });
+  // Sözleşme başlangıç tarihine göre otomatik aktifleştir
+  let rol = (ogrenci as { rol?: string }).rol ?? "Aktif";
+  if (rol === "Pasif") {
+    const aktifSozlesme = await prisma.sozlesme.findFirst({
+      where: { ogrenciId: ogrenci.id, durum: "OnaylandiAktifBekliyor", baslangicTarihi: { lte: new Date() } },
+    });
+    if (aktifSozlesme) {
+      await prisma.sozlesme.update({ where: { id: aktifSozlesme.id }, data: { durum: "Aktif" } });
+      await (prisma.ogrenci as unknown as { update: Function }).update({ where: { id: ogrenci.id }, data: { rol: "Aktif" } });
+      rol = "Aktif";
+    }
+  }
+  const token = await signToken({ id: ogrenci.id, ad: ogrenci.ad, soyad: ogrenci.soyad, email: ogrenci.email ?? "", rol });
 
   const res = NextResponse.json({ ok: true, ad: ogrenci.ad, soyad: ogrenci.soyad });
   res.cookies.set(COOKIE, token, { httpOnly: true, path: "/", maxAge: 60 * 60 * 24 * 7, sameSite: "lax" });

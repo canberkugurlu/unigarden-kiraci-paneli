@@ -11,6 +11,7 @@ export interface KiraciPayload {
   ad: string;
   soyad: string;
   email: string;
+  rol: string; // "Potansiyel" | "Pasif" | "Aktif"
 }
 
 export async function signToken(payload: KiraciPayload): Promise<string> {

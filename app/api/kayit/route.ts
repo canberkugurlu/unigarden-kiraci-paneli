@@ -19,7 +19,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "TC Kimlik No 11 haneli olmalıdır." }, { status: 400 });
     }
 
-    // E-posta zaten kayıtlı mı?
     const mevcutOgrenci = await prisma.ogrenci.findUnique({ where: { email } });
     if (mevcutOgrenci) {
       return NextResponse.json({ error: "Bu e-posta adresi zaten kayıtlı." }, { status: 409 });
@@ -27,34 +26,30 @@ export async function POST(req: Request) {
 
     const hashliSifre = await bcrypt.hash(sifre, 10);
 
-    // Ogrenci kaydı oluştur (henüz aktif değil — sozlesmesi yok)
-    await prisma.ogrenci.create({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const yeniOgrenci = await (prisma.ogrenci as any).create({
       data: {
-        ad,
-        soyad,
-        telefon,
-        email,
+        ad, soyad, telefon, email,
         sifre: hashliSifre,
         universite: universite || null,
         bolum: bolum || null,
         tcKimlik: tcKimlik || null,
+        rol: "Potansiyel",
       },
     });
 
-    // Potansiyel müşteri kaydı oluştur
     let notlar = "Kiracı portalından kayıt oldu.";
-    if (universite) notlar += ` Üniversite: ${universite}.`;
-    if (bolum) notlar += ` Bölüm: ${bolum}.`;
+    if (universite) notlar += ` Üniversite: ${universite.toUpperCase()}.`;
+    if (bolum) notlar += ` Bölüm: ${bolum.toUpperCase()}.`;
 
-    await prisma.potansiyelMusteri.create({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (prisma.potansiyelMusteri as any).create({
       data: {
-        ad,
-        soyad,
-        telefon,
-        email,
+        ad, soyad, telefon, email,
         kaynak: "KiraciPortal",
         durum: "Yeni",
         notlar,
+        ogrenciId: yeniOgrenci.id,
       },
     });
 
