@@ -35,6 +35,13 @@ export async function POST(req: NextRequest) {
     await prisma.sozlesme.update({ where: { id: aktifSozlesme.id }, data: { durum: "Aktif" } });
     await (prisma.ogrenci as unknown as { update: Function }).update({ where: { id: ogrenci.id }, data: { rol: "Aktif" } });
     rol = "Aktif";
+    // Cross-panel: kiralama CRM lead durumunu AktifKiraci yap
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const lead = await (prisma.potansiyelMusteri as any).findFirst({ where: { ogrenciId: ogrenci.id } });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (lead) await (prisma.potansiyelMusteri as any).update({ where: { id: lead.id }, data: { durum: "AktifKiraci" } });
+    } catch { /* sessizce atla */ }
   }
   const token = await signToken({ id: ogrenci.id, ad: ogrenci.ad, soyad: ogrenci.soyad, email: ogrenci.email ?? "", rol });
 
